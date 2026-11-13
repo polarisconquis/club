@@ -1892,34 +1892,92 @@ async function initAuth() {
             });
         }
 
-        window.syncToCloud = async function() {
-            try {
-                if (!auth.currentUser && typeof __initial_auth_token !== 'undefined') return;
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'polaris_store', 'main_doc');
-                await setDoc(docRef, {
-                    conquistasState: window.conquistasState,
-                    unitsState: window.unitsState,
-                    eventsState: window.eventsState,
-                    announcementsState: window.announcementsState,
-                    unitGridsState: window.unitGridsState,
-                    historyState: window.historyState,
-                    excelenciaState: window.excelenciaState,
-                    premiosAdicionalesState: window.premiosAdicionalesState,
-                    misionVisionState: window.misionVisionState,
-                    galleryState: window.galleryState,
-                    directoresState: window.directoresState,
-                    updatedAt: new Date().toISOString()
-                });
-            } catch (err) {
-                console.error("Error al sincronizar en la nube:", err);
-            }
-        };
+  
+window.syncToCloud = async function() {
+    try {
+        // Solo el director puede publicar los datos
+        if (!auth.currentUser ||
+            auth.currentUser.uid !== "zalt7IeZcbcoM7nBKPhyQtrxmjO2") {
+            return;
+        }
+
+        // Documento privado
+        const privateRef = doc(
+            db, 'artifacts', appId, 'public', 'data',
+            'polaris_store', 'main_doc'
+        );
+
+        await setDoc(privateRef, {
+            conquistasState: window.conquistasState,
+            unitsState: window.unitsState,
+            eventsState: window.eventsState,
+            announcementsState: window.announcementsState,
+            unitGridsState: window.unitGridsState,
+            historyState: window.historyState,
+            excelenciaState: window.excelenciaState,
+            premiosAdicionalesState: window.premiosAdicionalesState,
+            misionVisionState: window.misionVisionState,
+            galleryState: window.galleryState,
+            directoresState: window.directoresState,
+            updatedAt: new Date().toISOString()
+        });
+
+        // Documento público
+        const publicRef = doc(
+            db, 'artifacts', appId, 'public', 'data',
+            'polaris_store', 'public_doc'
+        );
+
+        await setDoc(publicRef, {
+            eventsState: window.eventsState,
+            announcementsState: window.announcementsState,
+            misionVisionState: window.misionVisionState,
+            galleryState: window.galleryState,
+            historyState: window.historyState,
+            updatedAt: new Date().toISOString()
+        });
+
+        console.log("Polaris sincronizado correctamente.");
+
+    } catch (err) {
+        console.error("Error al sincronizar en la nube:", err);
+    }
+};
+
 
         onAuthStateChanged(auth, (user) => {
     if (user && !user.isAnonymous) {
         setupCloudSync();
     }
 });
+
+function setupPublicSync() {
+    const publicRef = doc(
+        db, 'artifacts', appId, 'public', 'data',
+        'polaris_store', 'public_doc'
+    );
+
+    onSnapshot(publicRef, (docSnap) => {
+        if (!docSnap.exists()) return;
+
+        const data = docSnap.data();
+
+        window.eventsState = data.eventsState || [];
+        window.announcementsState = data.announcementsState || [];
+        window.misionVisionState = data.misionVisionState || {};
+        window.galleryState = data.galleryState || [];
+        window.historyState = data.historyState || "";
+
+        if (typeof window.refreshAllViews === 'function') {
+            window.refreshAllViews();
+        }
+    }, (error) => {
+        console.warn("No se pudieron cargar los datos públicos:", error);
+    });
+}
+
+setupPublicSync();
+
 
         initAuth();
     </script>
