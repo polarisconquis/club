@@ -3090,55 +3090,62 @@ if (UNIT_LEADERS[user]) {
     }
 }
     // CONQUISTADORES
-    const cqFound = window.conquistasState.find(
-        cq => cq.username.toLowerCase() === user
+try {
+    const credential = await window.polarisAuth.signInWithEmailAndPassword(
+        window.polarisAuth.auth,
+        `${authUsername}@polaris.invalid`,
+        pass
     );
 
-    if (cqFound) {
-        // Cuenta migrada a Firebase
-        if (cqFound.firebaseUid) {
-            try {
-                const credential = await window.polarisAuth.signInWithEmailAndPassword(
-                    window.polarisAuth.auth,
-                    `${authUsername}@polaris.invalid`,
-                    pass
-                );
+    const tokenInfo = await credential.user.getIdTokenResult();
 
-                currentUser = {
-                    role: 'conquistador',
-                    name: cqFound.nombre,
-                    data: cqFound,
-                    uid: credential.user.uid
-                };
-
-                showToast(`Bienvenido de nuevo, ${cqFound.nombre}`);
-                closeLoginModal();
-                showSGCApp();
-                return;
-
-            } catch (error) {
-                console.error('Error de acceso del conquistador:', error);
-                showToast('Usuario o contraseña incorrectos.');
-                return;
-            }
-        }
-
-        // Cuenta todavía no migrada
-        if (cqFound.password === pass) {
-            currentUser = {
-                role: 'conquistador',
-                name: cqFound.nombre,
-                data: cqFound
-            };
-
-            showToast(`Bienvenido de nuevo, ${cqFound.nombre}`);
-            closeLoginModal();
-            showSGCApp();
-            return;
-        }
+    if (tokenInfo.claims.role !== 'conquistador') {
+        await window.polarisAuth.auth.signOut();
+        showToast('Esta cuenta no tiene permisos de conquistador.');
+        return;
     }
 
-    showToast('Credenciales incorrectas. Verifique usuario y contraseña.');
+    const token = await credential.user.getIdToken();
+
+    const respuesta = await fetch(
+        `${window.polarisWorkerURL}/my-profile`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({})
+        }
+    );
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok || !resultado.success) {
+        await window.polarisAuth.auth.signOut();
+        showToast(resultado.error || 'No se pudo cargar tu expediente.');
+        return;
+    }
+
+    const perfil = resultado.profile;
+
+    currentUser = {
+        role: 'conquistador',
+        name: perfil.nombre,
+        data: perfil,
+        uid: credential.user.uid
+    };
+
+    showToast(`Bienvenido de nuevo, ${perfil.nombre}`);
+    closeLoginModal();
+    showSGCApp();
+    return;
+
+} catch (error) {
+    console.error('Error de acceso del conquistador:', error);
+    showToast('Usuario o contraseña incorrectos.');
+    return;
+}
 }
 
 
@@ -3820,7 +3827,7 @@ async function llamarPolarisWorker(ruta, datos) {
 
     return resultado;
 }
-        function saveConquistador(e) {
+        async function saveConquistador(e) {
             e.preventDefault();
             const id = document.getElementById('edit-cq-id').value;
             const nombre = document.getElementById('edit-cq-nombre').value.trim();
@@ -3841,11 +3848,7 @@ async function llamarPolarisWorker(ruta, datos) {
                     showToast('Expediente actualizado');
                 }
             } else {
-                const newCq = {
-                    id: 'cq-' + Date.now(),
-                    nombre, username, password, nacimiento, unidad, clase, puntaje,
-                    especialidades: [], clasesCompletadas: [], certificados: []
-                };
+                
                 window.conquistasState.push(newCq);
                 showToast('Nuevo conquistador registrado');
             }
