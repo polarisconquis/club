@@ -2157,21 +2157,42 @@ setupPublicSync();
         }
 
         function saveStorage() {
-            localStorage.setItem('polaris_cq_db', JSON.stringify(window.conquistasState));
-            localStorage.setItem('polaris_units_db', JSON.stringify(window.unitsState));
-            localStorage.setItem('polaris_events_db', JSON.stringify(window.eventsState));
-            localStorage.setItem('polaris_announcements_db', JSON.stringify(window.announcementsState));
-            localStorage.setItem('polaris_unit_grids_db', JSON.stringify(window.unitGridsState));
-            localStorage.setItem('polaris_history_db', JSON.stringify(window.historyState));
-            localStorage.setItem('polaris_excelencia_db', JSON.stringify(window.excelenciaState));
-            localStorage.setItem('polaris_premios_db', JSON.stringify(window.premiosAdicionalesState));
-            localStorage.setItem('polaris_mision_vision_db', JSON.stringify(window.misionVisionState));
-            localStorage.setItem('polaris_gallery_db', JSON.stringify(window.galleryState));
-            localStorage.setItem('polaris_directores_db', JSON.stringify(window.directoresState));
-            if (typeof window.syncToCloud === 'function') {
-                window.syncToCloud();
-            }
-        }
+    localStorage.setItem('polaris_cq_db', JSON.stringify(window.conquistasState));
+    localStorage.setItem('polaris_units_db', JSON.stringify(window.unitsState));
+    localStorage.setItem('polaris_events_db', JSON.stringify(window.eventsState));
+    localStorage.setItem('polaris_announcements_db', JSON.stringify(window.announcementsState));
+    localStorage.setItem('polaris_unit_grids_db', JSON.stringify(window.unitGridsState));
+    localStorage.setItem('polaris_history_db', JSON.stringify(window.historyState));
+    localStorage.setItem('polaris_excelencia_db', JSON.stringify(window.excelenciaState));
+    localStorage.setItem('polaris_premios_db', JSON.stringify(window.premiosAdicionalesState));
+    localStorage.setItem('polaris_mision_vision_db', JSON.stringify(window.misionVisionState));
+    localStorage.setItem('polaris_gallery_db', JSON.stringify(window.galleryState));
+    localStorage.setItem('polaris_directores_db', JSON.stringify(window.directoresState));
+
+    if (typeof window.syncToCloud === 'function') {
+        window.syncToCloud();
+    }
+
+    if (
+        typeof currentUser !== "undefined" &&
+        currentUser?.role === "leader" &&
+        currentUser.unit &&
+        typeof llamarPolarisWorker === "function"
+    ) {
+        clearTimeout(window.polarisLeaderSaveTimer);
+
+        window.polarisLeaderSaveTimer = setTimeout(() => {
+            const grid = window.unitGridsState?.[currentUser.unit];
+
+            if (!grid) return;
+
+            llamarPolarisWorker("/save-leader-grid", { grid })
+                .catch(error => {
+                    console.error("Error guardando tabla del líder:", error);
+                });
+        }, 600);
+    }
+}
 
         // FUNCIÓN DE SINCRONIZACIÓN AUTOMÁTICA DEL PUNTAJE DEL LÍDER AL USUARIO DEL NIÑO
         function syncGridScoresToUsers() {
@@ -3072,13 +3093,26 @@ if (UNIT_LEADERS[user]) {
         }
 
         currentUser = {
-            role: 'leader',
-            name: leaderInfo.name,
-            unit: leaderInfo.unit,
-            uid: credential.user.uid
-        };
+    role: 'leader',
+    name: leaderInfo.name,
+    unit: leaderInfo.unit,
+    uid: credential.user.uid
+};
 
-        showToast(`Bienvenido Líder ${leaderInfo.name} - Unidad ${leaderInfo.unit}`);
+// Recuperar la tabla guardada en la nube
+const resultado = await llamarPolarisWorker("/my-leader-grid", {});
+
+if (Array.isArray(resultado.grid)) {
+    window.unitGridsState = window.unitGridsState || {};
+    window.unitGridsState[leaderInfo.unit] = resultado.grid;
+
+    localStorage.setItem(
+        'polaris_unit_grids_db',
+        JSON.stringify(window.unitGridsState)
+    );
+}
+
+showToast(`Bienvenido Líder ${leaderInfo.name} - Unidad ${leaderInfo.unit}`);
         closeLoginModal();
         showSGCApp();
         return;
@@ -3898,7 +3932,7 @@ async function llamarPolarisWorker(ruta, datos) {
         }
 
         // --- CLASES COMPLETADAS ---
-        function openCompletedClassesModal(cqId) {
+        function openCompletedClafunction saveStorage()sesModal(cqId) {
             activeCqModalId = cqId;
             const cq = window.conquistasState.find(item => item.id === cqId);
             if (!cq) return;
