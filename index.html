@@ -3848,10 +3848,38 @@ async function llamarPolarisWorker(ruta, datos) {
                     showToast('Expediente actualizado');
                 }
             } else {
-                
-                window.conquistasState.push(newCq);
-                showToast('Nuevo conquistador registrado');
-            }
+    try {
+        const cuenta = await llamarPolarisWorker("/create-user", {
+            username,
+            password,
+            displayName: nombre,
+            role: "conquistador"
+        });
+
+        const newCq = {
+            id: 'cq-' + Date.now(),
+            nombre,
+            username: cuenta.username,
+            password,
+            firebaseUid: cuenta.uid,
+            nacimiento,
+            unidad,
+            clase,
+            puntaje,
+            especialidades: [],
+            clasesCompletadas: [],
+            certificados: []
+        };
+
+        window.conquistasState.push(newCq);
+        showToast('Nuevo conquistador registrado');
+
+    } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo crear la cuenta.');
+        return;
+    }
+}
 
             saveStorage();
             closeConquistadorModal();
