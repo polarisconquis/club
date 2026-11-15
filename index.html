@@ -2833,45 +2833,74 @@ setupPublicSync();
             document.getElementById('cq-event-register-modal').classList.add('hidden');
         };
 
-        window.handleCqRegisterSubmit = function(e) {
-            e.preventDefault();
-            const eventId = document.getElementById('cq-reg-event-id').value;
-            const note = document.getElementById('cq-reg-note').value.trim();
-            const ev = window.eventsState.find(e => e.id === eventId);
-            if (!ev) return;
+        window.handleCqRegisterSubmit = async function(e) {
+    e.preventDefault();
 
-            if (!ev.inscritos) ev.inscritos = [];
-            
-            const existingIndex = ev.inscritos.findIndex(item => typeof item === 'object' ? item.id === currentUser.data.id : item === currentUser.data.id);
-            if (existingIndex !== -1) {
-                ev.inscritos[existingIndex] = { id: currentUser.data.id, note: note };
-            } else {
-                ev.inscritos.push({ id: currentUser.data.id, note: note });
-            }
+    const eventId = document.getElementById('cq-reg-event-id').value;
+    const note = document.getElementById('cq-reg-note').value.trim();
+
+    try {
+        const resultado = await llamarPolarisWorker("/register-event", {
+            eventId: eventId,
+            action: "register",
+            note: note
+        });
+
+        window.eventsState = resultado.eventsState;
+
+        saveStorage();
+        closeCqRegisterModal();
+        renderLatestEventHero();
+        renderConquistadorSpace();
+
+        showToast('¡Inscripción registrada!');
+
+    } catch (error) {
+        console.error("Error al inscribirse:", error);
+        showToast(error.message || "No se pudo registrar la inscripción.");
+    }
+};
+
+        window.toggleEventRegistration = async function(eventId) {
+    if (!currentUser || currentUser.role !== 'conquistador') return;
+
+    const ev = window.eventsState.find(e => e.id === eventId);
+    if (!ev) return;
+
+    if (!Array.isArray(ev.inscritos)) {
+        ev.inscritos = [];
+    }
+
+    const index = ev.inscritos.findIndex(item =>
+        typeof item === 'object'
+            ? String(item.id) === String(currentUser.data.id)
+            : String(item) === String(currentUser.data.id)
+    );
+
+    if (index !== -1) {
+        try {
+            const resultado = await llamarPolarisWorker("/register-event", {
+                eventId: eventId,
+                action: "cancel",
+                note: ""
+            });
+
+            window.eventsState = resultado.eventsState;
 
             saveStorage();
-            closeCqRegisterModal();
             renderLatestEventHero();
             renderConquistadorSpace();
-            showToast('¡Inscripción registrada!');
-        };
 
-        window.toggleEventRegistration = function(eventId) {
-            if (!currentUser || currentUser.role !== 'conquistador') return;
-            const ev = window.eventsState.find(e => e.id === eventId);
-            if (!ev || !ev.inscritos) return;
+            showToast('Inscripción cancelada');
 
-            const index = ev.inscritos.findIndex(item => typeof item === 'object' ? item.id === currentUser.data.id : item === currentUser.data.id);
-            if (index !== -1) {
-                ev.inscritos.splice(index, 1);
-                saveStorage();
-                renderLatestEventHero();
-                renderConquistadorSpace();
-                showToast('Inscripción cancelada');
-            } else {
-                window.openCqRegisterModal(eventId);
-            }
-        };
+        } catch (error) {
+            console.error("Error al cancelar inscripción:", error);
+            showToast(error.message || "No se pudo cancelar la inscripción.");
+        }
+    } else {
+        window.openCqRegisterModal(eventId);
+    }
+};
 
         window.openEventAttendeesModal = function(eventId) {
             const ev = window.eventsState.find(e => e.id === eventId);
