@@ -1927,9 +1927,33 @@ window.syncToCloud = async function() {
             db, 'artifacts', appId, 'public', 'data',
             'polaris_store', 'public_doc'
         );
+const unitsRankingState = window.unitsState.map(u => {
+    const members = window.conquistasState.filter(
+        cq => cq.unidad === u.nombre
+    );
 
+    const autoScore = members.reduce(
+        (sum, cq) => sum + (Number(cq.puntaje) || 0), 0
+    );
+
+    const totalScore =
+        u.customScore !== null &&
+        u.customScore !== undefined &&
+        u.customScore !== ''
+            ? Number(u.customScore)
+            : autoScore;
+
+    return {
+        id: u.id,
+        nombre: u.nombre,
+        lema: u.lema,
+        memberCount: members.length,
+        totalScore
+    };
+}).sort((a, b) => b.totalScore - a.totalScore);
         await setDoc(publicRef, {
             eventsState: window.eventsState,
+            unitsRankingState: unitsRankingState,
             announcementsState: window.announcementsState,
             misionVisionState: window.misionVisionState,
             galleryState: window.galleryState,
@@ -1963,6 +1987,7 @@ function setupPublicSync() {
         const data = docSnap.data();
 
         window.eventsState = data.eventsState || [];
+        window.unitsRankingState = data.unitsRankingState || [];
         window.announcementsState = data.announcementsState || [];
         window.misionVisionState = data.misionVisionState || {};
         window.galleryState = data.galleryState || [];
@@ -3749,7 +3774,7 @@ try {
                 }
             }
 
-            const rankedUnits = calculateUnitsRanking();
+            const rankedUnits = window.unitsRankingState || [];
             const cqUnitsContainer = document.getElementById('cq-units-ranking-container');
             if (cqUnitsContainer) {
                 cqUnitsContainer.innerHTML = rankedUnits.map((u, index) => `
