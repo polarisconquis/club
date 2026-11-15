@@ -1951,9 +1951,17 @@ const unitsRankingState = window.unitsState.map(u => {
         totalScore
     };
 }).sort((a, b) => b.totalScore - a.totalScore);
-        await setDoc(publicRef, {
+        const conquistadoresRankingState = [...window.conquistasState]
+    .sort((a, b) => (Number(b.puntaje) || 0) - (Number(a.puntaje) || 0))
+    .map((cq, index) => ({
+        id: cq.id,
+        puesto: index + 1
+    }));
+await setDoc(publicRef, {
+            
             eventsState: window.eventsState,
             unitsRankingState: unitsRankingState,
+            conquistadoresRankingState: conquistadoresRankingState,
             announcementsState: window.announcementsState,
             misionVisionState: window.misionVisionState,
             galleryState: window.galleryState,
@@ -1988,6 +1996,7 @@ function setupPublicSync() {
 
         window.eventsState = data.eventsState || [];
         window.unitsRankingState = data.unitsRankingState || [];
+        window.conquistadoresRankingState = data.conquistadoresRankingState || [];
         window.announcementsState = data.announcementsState || [];
         window.misionVisionState = data.misionVisionState || {};
         window.galleryState = data.galleryState || [];
@@ -3741,9 +3750,9 @@ try {
             document.getElementById('cq-clase-badge').innerText = cq.clase;
             document.getElementById('cq-score').innerText = cq.puntaje;
 
-            const rankedList = getRankedConquistadores();
-            const foundRank = rankedList.find(c => c.id === cq.id);
-            const puestoNum = foundRank ? foundRank.puesto : 1;
+            const rankedList = window.conquistadoresRankingState || [];
+const foundRank = rankedList.find(c => c.id === cq.id);
+const puestoNum = foundRank ? foundRank.puesto : '-';
             document.getElementById('cq-puesto-number').innerText = `#${puestoNum}`;
 
             const eventsContainer = document.getElementById('cq-events-container');
