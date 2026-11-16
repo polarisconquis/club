@@ -1965,6 +1965,8 @@ await setDoc(publicRef, {
             announcementsState: window.announcementsState,
             misionVisionState: window.misionVisionState,
             galleryState: window.galleryState,
+            directoresState: window.directoresState,
+premiosAdicionalesState: window.premiosAdicionalesState,
             historyState: window.historyState,
             updatedAt: new Date().toISOString()
         });
@@ -2000,6 +2002,8 @@ function setupPublicSync() {
         window.announcementsState = data.announcementsState || [];
         window.misionVisionState = data.misionVisionState || {};
         window.galleryState = data.galleryState || [];
+        window.directoresState = data.directoresState || [];
+window.premiosAdicionalesState = data.premiosAdicionalesState || [];
         window.historyState = data.historyState || "";
 
         if (typeof window.refreshAllViews === 'function') {
