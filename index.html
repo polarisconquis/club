@@ -65,59 +65,63 @@
     <div id="landing-page" class="min-h-screen flex flex-col">
         
         <!-- NAVEGACIÓN PRINCIPAL -->
-        <nav class="fixed top-0 left-0 w-full z-40 glass border-b border-gray-200 transition-all duration-300" id="landing-nav">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-20">
-                    <!-- Logo & Marca -->
-                    <div class="flex items-center space-x-3 cursor-pointer" onclick="scrollToSection('hero')">
-                        <div class="w-11 h-11 bg-polaris-navy rounded-full flex items-center justify-center border-2 border-polaris-accent shadow-md">
-                            <i data-lucide="star" class="w-6 h-6 text-polaris-accent"></i>
-                        </div>
-                        <div>
-                            <span class="text-xl font-black tracking-wider text-polaris-navy block leading-tight">POLARIS</span>
-                            <span class="text-xs font-semibold text-polaris-blue tracking-widest uppercase block">Club de Conquistadores</span>
-                        </div>
-                    </div>
 
-                    <!-- Menú Desktop -->
-                    <div class="hidden md:flex items-center space-x-8 font-medium text-sm text-gray-700">
-                        <a href="#hero" class="hover:text-polaris-blue transition">Inicio</a>
-                        <a href="#nosotros" class="hover:text-polaris-blue transition">¿Quiénes Somos?</a>
-                        <a href="#clases" class="hover:text-polaris-blue transition">Clases Regulares</a>
-                        <a href="#excelencia" class="hover:text-polaris-blue transition">Ranking - TOP 10</a>
-                        <a href="#eventos" class="hover:text-polaris-blue transition">Eventos</a>
-                        <a href="#galeria" class="hover:text-polaris-blue transition">Galería</a>
-                        <a href="#directores" class="hover:text-polaris-blue transition">Directores</a>
-                        <button onclick="openLoginModal()" class="flex items-center space-x-2 bg-polaris-navy text-white px-5 py-2.5 rounded-xl hover:bg-polaris-dark transition shadow-lg hover:shadow-xl font-semibold transform hover:-translate-y-0.5">
-                            <i data-lucide="log-in" class="w-4 h-4 text-polaris-accent"></i>
-                            <span>Iniciar sesión</span>
-                        </button>
-                    </div>
+<nav class="fixed top-0 left-0 w-full z-40 glass border-b border-gray-200 transition-all duration-300" id="landing-nav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
 
-                    <!-- Botón Hamburguesa Móvil -->
-                    <div class="md:hidden flex items-center">
-                        <button id="mobile-menu-btn" class="p-2 rounded-lg text-gray-700 hover:text-polaris-navy focus:outline-none">
-                            <i data-lucide="menu" class="w-7 h-7"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <!-- Logo & Marca -->
+<div class="flex items-center space-x-3 cursor-pointer" onclick="scrollToSection('hero')">
+    <div class="w-12 h-12 shrink-0 rounded-full overflow-hidden bg-polaris-navy flex items-center justify-center">
+        <img src="logo-polaris.png" alt="Logo Club Polaris" class="w-14 h-14 object-contain">
+    </div>
+    <div>
+        <span class="text-xl font-black tracking-wider text-polaris-navy block leading-tight">PORTAL</span>
+        <span class="text-xs font-semibold text-polaris-blue tracking-widest uppercase block">Club de Conquistadores</span>
+    </div>
+</div>
 
-            <!-- Menú Desplegable Móvil -->
-            <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3">
-                <a href="#hero" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Inicio</a>
-                <a href="#nosotros" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">¿Quiénes Somos?</a>
-                <a href="#clases" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Clases Regulares</a>
-                <a href="#excelencia" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Ranking - TOP 10</a>
-                <a href="#eventos" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Eventos</a>
-                <a href="#galeria" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Galería</a>
-                <a href="#directores" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Directores</a>
-                <button onclick="toggleMobileMenu(); openLoginModal()" class="w-full flex items-center justify-center space-x-2 bg-polaris-navy text-white py-3 rounded-xl font-semibold">
-                    <i data-lucide="log-in" class="w-5 h-5 text-polaris-accent"></i>
+            <!-- Menú Desktop -->
+            <div class="hidden md:flex items-center space-x-8 font-medium text-sm text-gray-700">
+                <a href="#hero" class="hover:text-polaris-blue transition">Inicio</a>
+                <a href="#nosotros" class="hover:text-polaris-blue transition">¿Quiénes Somos?</a>
+                <a href="#clases" class="hover:text-polaris-blue transition">Clases Regulares</a>
+                <a href="#excelencia" class="hover:text-polaris-blue transition">Ranking - TOP 10</a>
+                <a href="#eventos" class="hover:text-polaris-blue transition">Eventos</a>
+                <a href="#galeria" class="hover:text-polaris-blue transition">Galería</a>
+                <a href="#directores" class="hover:text-polaris-blue transition">Directores</a>
+                <button onclick="openLoginModal()" class="flex items-center space-x-2 bg-polaris-navy text-white px-5 py-2.5 rounded-xl hover:bg-polaris-dark transition shadow-lg hover:shadow-xl font-semibold transform hover:-translate-y-0.5">
+                    <i data-lucide="log-in" class="w-4 h-4 text-polaris-accent"></i>
                     <span>Iniciar sesión</span>
                 </button>
             </div>
-        </nav>
+
+            <!-- Botón Hamburguesa Móvil -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="p-2 rounded-lg text-gray-700 hover:text-polaris-navy focus:outline-none">
+                    <i data-lucide="menu" class="w-7 h-7"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Menú Desplegable Móvil -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3">
+        <a href="#hero" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Inicio</a>
+        <a href="#nosotros" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">¿Quiénes Somos?</a>
+        <a href="#clases" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Clases Regulares</a>
+        <a href="#excelencia" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Ranking - TOP 10</a>
+        <a href="#eventos" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Eventos</a>
+        <a href="#galeria" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Galería</a>
+        <a href="#directores" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg font-medium hover:bg-gray-100">Directores</a>
+        <button onclick="toggleMobileMenu(); openLoginModal()" class="w-full flex items-center justify-center space-x-2 bg-polaris-navy text-white py-3 rounded-xl font-semibold">
+            <i data-lucide="log-in" class="w-5 h-5 text-polaris-accent"></i>
+            <span>Iniciar sesión</span>
+        </button>
+    </div>
+</nav>
+
 
         <!-- HERO SECTION -->
         <section id="hero" class="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-to-b from-polaris-navy via-polaris-dark to-polaris-navy text-white relative overflow-hidden">
@@ -152,7 +156,7 @@
                             <div class="absolute -top-6 -right-6 w-20 h-20 bg-polaris-accent/20 rounded-full blur-xl"></div>
                             <div class="text-center space-y-4">
                                 <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-polaris-accent to-yellow-300 rounded-full flex items-center justify-center shadow-inner">
-                                    <i data-lucide="shield" class="w-14 h-14 text-polaris-navy"></i>
+                                    <img src="escudo-polaris.png" alt="Escudo Club Polaris" class="w-24 h-24 object-contain">
                                 </div>
                                 <h3 class="text-2xl font-bold text-white">Lema del Club</h3>
                                 <p class="text-gray-200 italic font-light">"SIRVIENDO, DISCIPULANDO Y PREDICANDO"</p>
@@ -271,7 +275,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <span class="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">10 Años</span>
-                                <i data-lucide="award" class="w-8 h-8 text-blue-500"></i>
+                                <img src="clase-amigo.png" alt="Insignia Amigo" class="w-20 h-20 object-contain">
                             </div>
                             <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Amigo</h3>
                             <p class="text-gray-600 text-sm mb-4">Iniciación en los principios del club, nudos básicos, historia denominacional y salud personal.</p>
@@ -284,7 +288,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <span class="text-xs font-bold px-3 py-1 bg-red-100 text-red-800 rounded-full">11 Años</span>
-                                <i data-lucide="award" class="w-8 h-8 text-red-500"></i>
+                                <img src="clase-companero.png" alt="Insignia Compañero" class="w-20 h-20 object-contain">
                             </div>
                             <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Compañero</h3>
                             <p class="text-gray-600 text-sm mb-4">Profundización en trabajo de equipo, primeros auxilios intermedios y estudio de la naturaleza.</p>
@@ -297,7 +301,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <span class="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">12 Años</span>
-                                <i data-lucide="award" class="w-8 h-8 text-emerald-500"></i>
+                                <img src="clase-explorador.png" alt="Insignia Explorador" class="w-20 h-20 object-contain">
                             </div>
                             <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Explorador</h3>
                             <p class="text-gray-600 text-sm mb-4">Supervivencia al aire libre, orientación por brújula y desarrollo de habilidades físicas avanzadas.</p>
@@ -310,7 +314,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <span class="text-xs font-bold px-3 py-1 bg-gray-100 text-gray-800 rounded-full">13 Años</span>
-                                <i data-lucide="award" class="w-8 h-8 text-gray-600"></i>
+                                <img src="clase-pionero.png" alt="Insignia Pionero" class="w-20 h-20 object-contain">
                             </div>
                             <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Pionero</h3>
                             <p class="text-gray-600 text-sm mb-4">Toma de decisiones, consejería entre pares, proyectos sociales y dominio de mapa y topografía.</p>
@@ -323,7 +327,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <span class="text-xs font-bold px-3 py-1 bg-purple-100 text-purple-800 rounded-full">14 Años</span>
-                                <i data-lucide="award" class="w-8 h-8 text-purple-700"></i>
+                                <img src="clase-excursionista.png" alt="Insignia Excursionista" class="w-20 h-20 object-contain">
                             </div>
                             <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Excursionista</h3>
                             <p class="text-gray-600 text-sm mb-4">Expediciones de alta exigencia, servicio transcultural y especialidades avanzadas de arte técnico.</p>
@@ -336,7 +340,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <span class="text-xs font-bold px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full">15 Años</span>
-                                <i data-lucide="award" class="w-8 h-8 text-yellow-500"></i>
+                                <img src="clase-guia.png" alt="Insignia Guía" class="w-20 h-20 object-contain">
                             </div>
                             <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Guía</h3>
                             <p class="text-gray-600 text-sm mb-4">Máximo nivel de liderazgo juvenil, formación de directivos de unidad y conducción de actividades.</p>
@@ -463,7 +467,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-12">
                     <h2 class="text-xs font-bold uppercase tracking-widest text-polaris-blue mb-2">Liderazgo a través del tiempo</h2>
-                    <p class="text-3xl sm:text-4xl font-extrabold text-polaris-navy">Directores Históricos (Desde 2009)</p>
+                    <p class="text-3xl sm:text-4xl font-extrabold text-polaris-navy">Directores Históricos </p>
                     <p class="text-gray-600 mt-2 text-sm sm:text-base">Reconocimiento a los líderes que han dirigido con visión y lealtad el Club Polaris.</p>
                 </div>
 
@@ -491,7 +495,7 @@
                     <div class="space-y-4 md:col-span-2">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-polaris-accent rounded-full flex items-center justify-center">
-                                <i data-lucide="star" class="w-6 h-6 text-polaris-navy"></i>
+                                <img src="logo-polaris.png" alt="Logo Polaris" class="w-14 h-14 object-contain">
                             </div>
                             <span class="text-2xl font-black text-white">POLARIS</span>
                         </div>
@@ -519,11 +523,11 @@
                         <div class="space-y-3 text-sm text-gray-400">
                             <p class="flex items-center space-x-2">
                                 <i data-lucide="mail" class="w-4 h-4 text-polaris-accent"></i>
-                                <span>contacto@clubpolaris.org</span>
+                                <span>clubpolaris@gmail.com</span>
                             </p>
                             <p class="flex items-center space-x-2">
                                 <i data-lucide="phone" class="w-4 h-4 text-polaris-accent"></i>
-                                <span>+51 987 654 321</span>
+                                <span>+51 925 745 947</span>
                             </p>
                             <div class="flex space-x-4 pt-2">
                                 <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-polaris-accent hover:text-polaris-navy transition"><i data-lucide="facebook" class="w-4 h-4"></i></a>
@@ -581,7 +585,7 @@
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
                 <div class="w-16 h-16 bg-polaris-accent rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
-                    <i data-lucide="shield-check" class="w-10 h-10 text-polaris-navy"></i>
+                    <img src="escudo-polaris.png" alt="Escudo Polaris" class="w-20 h-20 object-contain">
                 </div>
                 <h3 class="text-2xl font-black">Acceso al PORTAL</h3>
                 <p class="text-xs text-gray-300 mt-1">Sistema de Gestión de Conquistadores Polaris</p>
@@ -628,7 +632,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="w-9 h-9 bg-polaris-accent rounded-full flex items-center justify-center text-polaris-navy font-bold">
-                        <i data-lucide="star" class="w-5 h-5"></i>
+                        <img src="logo-polaris.png" alt="Logo Polaris" class="w-14 h-14 object-contain">
                     </div>
                     <div>
                         <span class="font-extrabold text-lg leading-none block">PORTAL POLARIS</span>
@@ -919,7 +923,7 @@
                     <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-6">
                         <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-gray-100 pb-4">
                             <div>
-                                <h3 class="text-xl font-bold text-polaris-navy">Gestión de Directores Históricos (Desde el 2009)</h3>
+                                <h3 class="text-xl font-bold text-polaris-navy">Gestión de Directores Históricos </h3>
                                 <p class="text-xs text-gray-500">Registro histórico de los directores que lideraron el club año a año.</p>
                             </div>
                             <button onclick="openAddDirectorModal()" class="px-5 py-2.5 bg-polaris-accent text-polaris-navy font-bold hover:bg-yellow-400 rounded-xl text-xs shadow transition flex items-center space-x-2">
@@ -2636,7 +2640,7 @@ setupPublicSync();
                             <td class="p-3 font-bold text-amber-950">${item.nombre}</td>
                             <td class="p-3"><span class="px-2 py-0.5 bg-white border border-amber-200 rounded text-xs font-semibold text-amber-800">${item.unidad}</span></td>
                             <td class="p-3 font-black text-amber-800 flex items-center space-x-1">
-                                <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-400"></i>
+                                <img src="logo-polaris.png" alt="Logo Polaris" class="w-14 h-14 object-contain">
                                 <span>${item.titulo}</span>
                             </td>
                         </tr>
@@ -2977,17 +2981,28 @@ setupPublicSync();
         };
 
         function showClassDetail(title, age, color, desc) {
-            document.getElementById('modal-class-title').innerText = title;
-            document.getElementById('modal-class-age').innerText = age;
-            document.getElementById('modal-class-color').innerText = color;
-            document.getElementById('modal-class-desc').innerText = desc;
-            
-            const iconBg = document.getElementById('modal-class-icon');
-            iconBg.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-xl ' + 
-                (title === 'Amigo' ? 'bg-blue-500' : title === 'Compañero' ? 'bg-red-500' : title === 'Explorador' ? 'bg-emerald-500' : title === 'Pionero' ? 'bg-amber-600' : title === 'Excursionista' ? 'bg-purple-700' : 'bg-yellow-500');
+    document.getElementById('modal-class-title').innerText = title;
+    document.getElementById('modal-class-age').innerText = age;
+    document.getElementById('modal-class-color').innerText = color;
+    document.getElementById('modal-class-desc').innerText = desc;
 
-            document.getElementById('class-modal').classList.remove('hidden');
-        }
+    const iconBg = document.getElementById('modal-class-icon');
+
+    const insignias = {
+        'Amigo': 'clase-amigo.png',
+        'Compañero': 'clase-companero.png',
+        'Explorador': 'clase-explorador.png',
+        'Pionero': 'clase-pionero.png',
+        'Excursionista': 'clase-excursionista.png',
+        'Guía': 'clase-guia.png'
+    };
+
+    iconBg.className = 'w-20 h-20 flex items-center justify-center';
+
+    iconBg.innerHTML = `<img src="${insignias[title]}" alt="Insignia ${title}" class="w-20 h-20 object-contain">`;
+
+    document.getElementById('class-modal').classList.remove('hidden');
+}
 
         function closeClassModal() {
             document.getElementById('class-modal').classList.add('hidden');
