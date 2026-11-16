@@ -4043,14 +4043,38 @@ if (!yaExiste) {
         }
 
         function deleteConquistador(id) {
-            if (confirm('¿Está seguro de eliminar este conquistador?')) {
-                window.conquistasState = window.conquistasState.filter(cq => cq.id !== id);
-                saveStorage();
-                renderDirectorRanking();
-                renderDirectorManagementTable();
-                showToast('Conquistador eliminado');
-            }
+    if (confirm('¿Está seguro de eliminar este conquistador?')) {
+
+        // Encontrar al conquistador antes de eliminarlo
+        const cq = window.conquistasState.find(item => item.id === id);
+
+        if (!cq) return;
+
+        // Eliminarlo de la tabla de su unidad
+        const unidad = cq.unidad;
+
+        if (window.unitGridsState[unidad]) {
+            window.unitGridsState[unidad] =
+                window.unitGridsState[unidad].filter(
+                    fila => fila.conquistadorId !== id
+                );
         }
+
+        // Eliminarlo de los expedientes
+        window.conquistasState =
+            window.conquistasState.filter(item => item.id !== id);
+
+        // Guardar y actualizar
+        saveStorage();
+
+        renderDirectorRanking();
+        renderDirectorManagementTable();
+        renderUnitsManagement();
+        renderDirectorConsolidado();
+
+        showToast('Conquistador eliminado correctamente');
+    }
+}
 
         // --- CLASES COMPLETADAS ---
         function openCompletedClassesModal(cqId) {
