@@ -2000,6 +2000,7 @@ function setupPublicSync() {
         window.eventsState = data.eventsState || [];
         window.unitsRankingState = data.unitsRankingState || [];
         window.conquistadoresRankingState = data.conquistadoresRankingState || [];
+        window.excelenciaState = data.excelenciaState || [];
         window.announcementsState = data.announcementsState || [];
         window.misionVisionState = data.misionVisionState || {};
         window.galleryState = data.galleryState || [];
@@ -2014,8 +2015,6 @@ window.premiosAdicionalesState = data.premiosAdicionalesState || [];
         console.warn("No se pudieron cargar los datos públicos:", error);
     });
 }
-
-setupPublicSync();
 
 
         initAuth();
@@ -2289,6 +2288,7 @@ setupPublicSync();
 
         window.addEventListener('DOMContentLoaded', () => {
             initStorage();
+            setupPublicSync();
             if (window.lucide) lucide.createIcons();
             renderLatestEventHero();
             renderPublicEvents();
