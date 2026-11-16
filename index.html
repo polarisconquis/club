@@ -2016,6 +2016,7 @@ window.premiosAdicionalesState = data.premiosAdicionalesState || [];
     });
 }
 
+setupPublicSync();
 
         initAuth();
     </script>
@@ -2288,7 +2289,6 @@ window.premiosAdicionalesState = data.premiosAdicionalesState || [];
 
         window.addEventListener('DOMContentLoaded', () => {
             initStorage();
-            setupPublicSync();
             if (window.lucide) lucide.createIcons();
             renderLatestEventHero();
             renderPublicEvents();
