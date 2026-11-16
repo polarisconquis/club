@@ -1113,15 +1113,6 @@
                             <h2 id="leader-unit-title" class="text-2xl font-black text-polaris-navy mt-1">Planilla de Evaluación Semanal</h2>
                             <p class="text-xs text-gray-500">Califica las 4 semanas del mes. Los puntajes se sincronizan automáticamente con la ficha del conquistador.</p>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <button onclick="addLeaderConquistadorRow()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1">
-                                <i data-lucide="user-plus" class="w-4 h-4"></i>
-                                <span>+ Agregar Conquistador</span>
-                            </button>
-                            <button onclick="window.print()" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl text-xs font-semibold transition">
-                                Imprimir Planilla
-                            </button>
-                        </div>
                     </div>
 
                     <!-- TABLA PRINCIPAL EVALUACIÓN SEMANAL -->
@@ -2238,29 +2229,66 @@ setupPublicSync();
 }
 
         // FUNCIÓN DE SINCRONIZACIÓN AUTOMÁTICA DEL PUNTAJE DEL LÍDER AL USUARIO DEL NIÑO
-        function syncGridScoresToUsers() {
-            if (!window.unitGridsState || !window.conquistasState) return;
+        
+function syncGridScoresToUsers() {
+    if (!window.unitGridsState || !window.conquistasState) return;
 
-            let updated = false;
+    let updated = false;
 
-            Object.keys(window.unitGridsState).forEach(uName => {
-                const cqsInGrid = window.unitGridsState[uName] || [];
-                cqsInGrid.forEach(gridCq => {
-                    const gridNameNorm = gridCq.name.trim().toLowerCase();
-                    const userMatch = window.conquistasState.find(c => c.nombre.trim().toLowerCase() === gridNameNorm);
+    Object.keys(window.unitGridsState).forEach(uName => {
+        const cqsInGrid = window.unitGridsState[uName] || [];
 
-                    if (userMatch) {
-                        const calculatedTotal = (gridCq.months || []).reduce((a, b) => (Number(a)||0) + (Number(b)||0), 0);
-                        if (userMatch.puntaje !== calculatedTotal && calculatedTotal > 0) {
-                            userMatch.puntaje = calculatedTotal;
-                            updated = true;
-                        }
-                    }
-                });
-            });
+        cqsInGrid.forEach(gridCq => {
+            if (!gridCq) return;
 
-            return updated;
-        }
+            let userMatch = null;
+
+            // 1. Buscar por ID único
+            if (gridCq.conquistadorId) {
+                userMatch = window.conquistasState.find(
+                    c => c.id === gridCq.conquistadorId
+                );
+            }
+
+            // 2. Buscar por UID de Firebase
+            if (!userMatch && gridCq.firebaseUid) {
+                userMatch = window.conquistasState.find(
+                    c => c.firebaseUid === gridCq.firebaseUid
+                );
+            }
+
+            // 3. Compatibilidad con filas antiguas sin ID
+            if (!userMatch && gridCq.name) {
+                const gridNameNorm = gridCq.name.trim().toLowerCase();
+
+                userMatch = window.conquistasState.find(c =>
+                    c.unidad === uName &&
+                    (c.nombre || '').trim().toLowerCase() === gridNameNorm
+                );
+
+                if (userMatch) {
+                    gridCq.conquistadorId = userMatch.id;
+                    gridCq.firebaseUid = userMatch.firebaseUid || null;
+                }
+            }
+
+            if (userMatch) {
+                const calculatedTotal = (gridCq.months || []).reduce(
+                    (total, month) => total + (Number(month) || 0),
+                    0
+                );
+
+                if (Number(userMatch.puntaje || 0) !== calculatedTotal) {
+                    userMatch.puntaje = calculatedTotal;
+                    updated = true;
+                }
+            }
+        });
+    });
+
+    return updated;
+}
+
 
         window.refreshAllViews = function() {
             syncGridScoresToUsers();
@@ -3335,12 +3363,8 @@ try {
             document.getElementById('leader-unit-title').innerText = `Planilla de Evaluación - Unidad ${unitName}`;
 
             if (!window.unitGridsState[unitName]) {
-                window.unitGridsState[unitName] = [
-                    createDefaultConquistador(0),
-                    createDefaultConquistador(1),
-                    createDefaultConquistador(2)
-                ];
-            }
+    window.unitGridsState[unitName] = [];
+}
 
             const cqs = window.unitGridsState[unitName];
             const tbodyWeekly = document.getElementById('leader-weekly-tbody');
@@ -3358,7 +3382,7 @@ try {
                     if (wIdx === 0) {
                         nameCell = `
                             <td rowspan="4" class="border border-gray-200 p-2 align-top bg-gray-50">
-                                <input type="text" value="${cqItem.name}" oninput="updateLeaderCqName('${unitName}', ${cIdx}, this.value)" class="w-full font-bold text-gray-900 bg-transparent border-b border-gray-300 focus:outline-none focus:border-polaris-blue text-sm py-1" placeholder="Nombre completo">
+                                <span class="block w-full font-bold text-gray-900 text-sm py-1">${cqItem.name}</span>
                                 <div class="mt-3 text-[11px] font-medium text-gray-500">
                                     Total Mes: <span class="font-bold text-polaris-blue text-xs">${monthTotal} pts</span>
                                 </div>
@@ -3402,19 +3426,27 @@ try {
         }
 
         window.updateLeaderCqName = function(unitName, cIdx, val) {
-            if (window.unitGridsState[unitName] && window.unitGridsState[unitName][cIdx]) {
-                window.unitGridsState[unitName][cIdx].name = val;
-                syncGridScoresToUsers();
-                saveStorage();
-            }
-        };
+    if (!currentUser || currentUser.role !== 'director') return;
 
-        window.updateLeaderCqScore = function(unitName, cIdx, wIdx, key, val) {
-            if (window.unitGridsState[unitName] && window.unitGridsState[unitName][cIdx]) {
-                window.unitGridsState[unitName][cIdx].weeks[wIdx][key] = Number(val) || 0;
-                saveStorage();
-            }
-        };
+    if (window.unitGridsState[unitName] && window.unitGridsState[unitName][cIdx]) {
+        window.unitGridsState[unitName][cIdx].name = val;
+        syncGridScoresToUsers();
+        saveStorage();
+    }
+};
+
+        
+window.updateLeaderCqScore = function(unitName, cIdx, wIdx, key, val) {
+    if (window.unitGridsState[unitName] && window.unitGridsState[unitName][cIdx]) {
+        window.unitGridsState[unitName][cIdx].weeks[wIdx][key] = Number(val) || 0;
+
+        syncGridScoresToUsers();
+        saveStorage();
+
+        renderDirectorRanking();
+    }
+};
+
 
         window.updateLeaderMonthScore = function(unitName, cIdx, mIdx, val) {
             if (window.unitGridsState[unitName] && window.unitGridsState[unitName][cIdx]) {
@@ -3424,27 +3456,18 @@ try {
                 const totalTd = document.getElementById(`leader-total-${cIdx}`);
                 if (totalTd) totalTd.innerText = newTotal;
 
-                // SINCRONIZACIÓN AUTOMÁTICA DEL PUNTAJE TOTAL AL USUARIO CONQUISTADOR
-                const cqNameNorm = window.unitGridsState[unitName][cIdx].name.trim().toLowerCase();
-                const matchedUser = window.conquistasState.find(u => u.nombre.trim().toLowerCase() === cqNameNorm);
-                if (matchedUser) {
-                    matchedUser.puntaje = newTotal;
-                }
+                // SINCRONIZACIÓN AUTOMÁTICA MEDIANTE ID
+syncGridScoresToUsers();
 
                 saveStorage();
             }
         };
 
         window.addLeaderConquistadorRow = function() {
-            if (!currentUser || currentUser.role !== 'leader') return;
-            const unitName = currentUser.unit;
-            if (!window.unitGridsState[unitName]) window.unitGridsState[unitName] = [];
-            const newIndex = window.unitGridsState[unitName].length;
-            window.unitGridsState[unitName].push(createDefaultConquistador(newIndex));
-            saveStorage();
-            renderLeaderUnitTable();
-            showToast('Nuevo conquistador agregado');
-        };
+    if (!currentUser || currentUser.role !== 'leader') return;
+
+    showToast('Los nuevos conquistadores deben ser registrados por el director');
+};
 
         // AL GUARDAR EL MES, SE SINCRONIZA AUTOMÁTICAMENTE EL PUNTAJE CON EL INTEGRANTE
         window.saveCurrentMonthAndNext = function() {
@@ -3460,13 +3483,8 @@ try {
                 
                 cqItem.months[targetIdx] = monthSum;
                 
-                // SINCRONIZACIÓN AUTOMÁTICA AL USUARIO
-                const cqNameNorm = cqItem.name.trim().toLowerCase();
-                const matchedUser = window.conquistasState.find(u => u.nombre.trim().toLowerCase() === cqNameNorm);
-                if (matchedUser) {
-                    const newTotal = cqItem.months.reduce((a, b) => (Number(a)||0) + (Number(b)||0), 0);
-                    matchedUser.puntaje = newTotal;
-                }
+                // SINCRONIZACIÓN AUTOMÁTICA MEDIANTE ID
+syncGridScoresToUsers();
 
                 cqItem.weeks = [
                     { p: 0, u: 0, c: 0, m: 0, mat: 0, clase: 0, part: 0, disc: 0 },
@@ -3989,6 +4007,26 @@ async function llamarPolarisWorker(ruta, datos) {
         };
 
         window.conquistasState.push(newCq);
+        // Vincular automáticamente al conquistador con su unidad
+if (!window.unitGridsState[unidad]) {
+    window.unitGridsState[unidad] = [];
+}
+
+const yaExiste = window.unitGridsState[unidad].some(
+    fila => fila.conquistadorId === newCq.id
+);
+
+if (!yaExiste) {
+    const nuevaFila = createDefaultConquistador(
+        window.unitGridsState[unidad].length,
+        nombre
+    );
+
+    nuevaFila.conquistadorId = newCq.id;
+    nuevaFila.firebaseUid = newCq.firebaseUid;
+
+    window.unitGridsState[unidad].push(nuevaFila);
+}
         showToast('Nuevo conquistador registrado');
 
     } catch (error) {
