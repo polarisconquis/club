@@ -3284,6 +3284,7 @@ try {
     showToast(`Bienvenido de nuevo, ${perfil.nombre}`);
     closeLoginModal();
     showSGCApp();
+    iniciarActualizacionPuntaje();
     return;
 
 } catch (error) {
@@ -3340,6 +3341,7 @@ try {
         }
 
         function logout() {
+            detenerActualizacionPuntaje();
             currentUser = null;
             document.getElementById('sgc-app').classList.add('hidden');
             document.getElementById('sgc-app').classList.remove('flex');
@@ -3900,7 +3902,53 @@ const puestoNum = foundRank ? foundRank.puesto : '-';
 
             if (window.lucide) lucide.createIcons();
         }
+// --- ACTUALIZACIÓN AUTOMÁTICA DEL PUNTAJE ---
+let polarisScoreSyncTimer = null;
 
+async function actualizarPuntajeEnVivo() {
+    if (!currentUser || currentUser.role !== 'conquistador') return;
+
+    try {
+        const token = await window.polarisAuth.getIdToken();
+
+        const respuesta = await fetch(`${window.polarisWorkerURL}/my-profile`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({})
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || !resultado.success) return;
+
+        const perfilNuevo = resultado.profile;
+
+        if (Number(currentUser.data.puntaje) !== Number(perfilNuevo.puntaje)) {
+            currentUser.data.puntaje = perfilNuevo.puntaje;
+
+            const score = document.getElementById('cq-score');
+            if (score) score.innerText = perfilNuevo.puntaje;
+        }
+    } catch (error) {
+        console.error('Error actualizando puntaje:', error);
+    }
+}
+
+function iniciarActualizacionPuntaje() {
+    clearInterval(polarisScoreSyncTimer);
+
+    polarisScoreSyncTimer = setInterval(() => {
+        actualizarPuntajeEnVivo();
+    }, 5000);
+}
+
+function detenerActualizacionPuntaje() {
+    clearInterval(polarisScoreSyncTimer);
+    polarisScoreSyncTimer = null;
+}
         // --- GESTIÓN DE EXPEDIENTES SIMPLIFICADOS (DIRECTOR) ---
         function openAddConquistadorModal() {
             document.getElementById('modal-conquistador-title').innerText = "Registrar Conquistador";
